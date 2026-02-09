@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { registerUser } from '../services/api';
 import './Auth.css';
 
 const Register = () => {
@@ -11,49 +8,22 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await registerUser({
-        nombre: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
-      // Assuming register API also returns user and token
-      login(response.data, response.token);
-      navigate('/profile');
-    } catch (err) {
-      setError('Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    console.log('Registering with:', formData);
   };
 
   return (
     <div className="auth-page container section-padding">
       <div className="auth-card">
-        <h1>Join Carrot</h1>
+        <h1>Join Leafy</h1>
         <p>Start your journey to becoming a plant pro today.</p>
         
-        {error && <div className="auth-error">{error}</div>}
-
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
@@ -95,13 +65,11 @@ const Register = () => {
               required 
             />
           </div>
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
+          <button type="submit" className="btn btn-primary btn-block">Create Account</button>
         </form>
         
         <div className="auth-footer">
-          <p>Already have an account? <Link to="/login">Log In</Link></p>
+          <p>Already have an account? <a href="/login">Log In</a></p>
         </div>
       </div>
     </div>

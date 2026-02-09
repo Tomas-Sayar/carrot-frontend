@@ -1,77 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Heart, Truck, ShieldCheck, Droplets, Sun, Thermometer, Loader2 } from 'lucide-react';
-import { fetchProductById, getImageUrl } from '../services/api';
-import { useCart } from '../context/CartContext';
+import { Heart, Truck, ShieldCheck, Droplets, Sun, Thermometer } from 'lucide-react';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { addToCart } = useCart();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedPot, setSelectedPot] = useState('Stone');
 
-  useEffect(() => {
-    const loadProduct = async () => {
-      setLoading(true);
-      const data = await fetchProductById(id);
-      setProduct(data);
-      setLoading(false);
-    };
-    loadProduct();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="product-detail-loading container section-padding">
-        <Loader2 className="animate-spin" size={40} />
-        <p>Loading plant details...</p>
-      </div>
-    );
-  }
-
-  if (!product) {
-    return (
-      <div className="product-detail-error container section-padding">
-        <h2>Plant not found</h2>
-        <p>We couldn't find the plant you're looking for.</p>
-        <a href="/shop" className="btn btn-primary">Back to Shop</a>
-      </div>
-    );
-  }
-
-  // Derived data
-  const pots = ['Stone', 'Clay', 'Charcoal', 'Slate', 'Indigo'];
-  const care = [
-    { icon: <Sun size={20} />, title: 'Light', detail: product.luz || 'Prefers bright, indirect light.' },
-    { icon: <Droplets size={20} />, title: 'Water', detail: product.riego || 'Water when soil is dry.' },
-    { icon: <Thermometer size={20} />, title: 'Temp', detail: 'Prefers temperatures between 65°F and 80°F.' }
-  ];
-
-  const handleAddToCart = () => {
-    addToCart(product, quantity);
+  // Mock product data
+  const product = {
+    id: 1,
+    name: 'Bamboo Palm',
+    price: 199,
+    category: 'Large Plants',
+    description: 'The Bamboo Palm is a beautiful, easy-to-care-for plant that adds a touch of the tropics to any space. It is known for its air-purifying qualities and graceful, arching fronds.',
+    imageUrl: 'https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=800&q=80',
+    pots: ['Stone', 'Clay', 'Charcoal', 'Slate', 'Indigo'],
+    care: [
+      { icon: <Sun size={20} />, title: 'Light', detail: 'Prefers bright, indirect light but can tolerate low light.' },
+      { icon: <Droplets size={20} />, title: 'Water', detail: 'Water when the top inch of soil is dry. Avoid overwatering.' },
+      { icon: <Thermometer size={20} />, title: 'Temp', detail: 'Prefers temperatures between 65°F and 80°F.' }
+    ]
   };
 
   return (
     <div className="product-detail-page container section-padding">
       <div className="product-main-grid">
         <div className="product-gallery">
-          <img src={getImageUrl(product.imagen)} alt={product.nombre} className="main-image" />
+          <img src={product.imageUrl} alt={product.name} className="main-image" />
+          <div className="thumbnail-list">
+            <div className="thumb active"><img src={product.imageUrl} alt="Thumb 1" /></div>
+            <div className="thumb"><img src={product.imageUrl} alt="Thumb 2" /></div>
+            <div className="thumb"><img src={product.imageUrl} alt="Thumb 3" /></div>
+          </div>
         </div>
 
         <div className="product-info-sidebar">
-          <span className="category-label">{product.categorias?.nombre || 'General'}</span>
-          <h1 className="product-title">{product.nombre}</h1>
-          <div className="product-price-large">${product.precio}</div>
+          <span className="category-label">{product.category}</span>
+          <h1 className="product-title">{product.name}</h1>
+          <div className="product-price-large">${product.price}</div>
           
-          <p className="product-description">{product.descripcion}</p>
+          <p className="product-description">{product.description}</p>
 
           <div className="variant-selector">
             <h3>Choose your pot color: <span>{selectedPot}</span></h3>
             <div className="pot-options">
-              {pots.map(pot => (
+              {product.pots.map(pot => (
                 <button 
                   key={pot} 
                   className={`pot-btn ${selectedPot === pot ? 'active' : ''}`}
@@ -90,9 +65,7 @@ const ProductDetail = () => {
               <span>{quantity}</span>
               <button onClick={() => setQuantity(quantity + 1)}>+</button>
             </div>
-            <button className="btn btn-primary add-to-cart-btn" onClick={handleAddToCart}>
-              Add to Cart
-            </button>
+            <button className="btn btn-primary add-to-cart-btn">Add to Cart</button>
             <button className="wishlist-btn"><Heart size={20} /></button>
           </div>
 
@@ -104,7 +77,7 @@ const ProductDetail = () => {
           <div className="care-instructions">
             <h3>Plant Care</h3>
             <div className="care-grid">
-              {care.map((item, idx) => (
+              {product.care.map((item, idx) => (
                 <div key={idx} className="care-item">
                   <div className="care-icon">{item.icon}</div>
                   <div>

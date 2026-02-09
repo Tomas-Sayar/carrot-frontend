@@ -1,41 +1,21 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { loginUser } from '../services/api';
 import './Auth.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      const response = await loginUser({ email, password });
-      // The API returns { data: user, token: token }
-      login(response.data, response.token);
-      navigate('/profile');
-    } catch (err) {
-      setError('Invalid email or password. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    console.log('Logging in with:', email, password);
   };
 
   return (
     <div className="auth-page container section-padding">
       <div className="auth-card">
         <h1>Welcome Back</h1>
-        <p>Log in to your Carrot account to manage your plant family.</p>
+        <p>Log in to your Leafy account to manage your plant family.</p>
         
-        {error && <div className="auth-error">{error}</div>}
-
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
@@ -57,13 +37,11 @@ const Login = () => {
               required 
             />
           </div>
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-            {loading ? 'Logging in...' : 'Log In'}
-          </button>
+          <button type="submit" className="btn btn-primary btn-block">Log In</button>
         </form>
         
         <div className="auth-footer">
-          <p>Don't have an account? <Link to="/register">Sign Up</Link></p>
+          <p>Don't have an account? <a href="/register">Sign Up</a></p>
           <a href="#" className="forgot-password">Forgot password?</a>
         </div>
       </div>
