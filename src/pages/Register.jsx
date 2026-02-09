@@ -21,7 +21,7 @@ const Register = () => {
   return (
     <div className="auth-page container section-padding">
       <div className="auth-card">
-        <h1>Join Leafy</h1>
+        <h1>Join Carrot</h1>
         <p>Start your journey to becoming a plant pro today.</p>
         
         <form onSubmit={handleSubmit} className="auth-form">

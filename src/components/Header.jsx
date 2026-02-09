@@ -36,7 +36,7 @@ const Header = () => {
         </nav>
 
         <div className="logo-container">
-          <a href="/" className="logo">LEAFY</a>
+          <a href="/" className="logo">CARROT</a>
         </div>
 
         <div className="header-actions">

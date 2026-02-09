@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
+import { fetchProducts } from '../services/api';
 import './Home.css';
 
 const Home = () => {
-  const featuredProducts = [
-    { id: 1, name: 'Bamboo Palm', price: 199, category: 'Large Plants', tag: 'Bestseller' },
-    { id: 2, name: 'ZZ Plant', price: 139, category: 'Low Maintenance', tag: 'Popular' },
-    { id: 3, name: 'Monstera Deliciosa', price: 99, category: 'Leafy', tag: 'Classic' },
-    { id: 4, name: 'Bird of Paradise', price: 99, category: 'Large Plants', tag: 'New' }
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const products = await fetchProducts();
+        // Tomar los primeros 4 productos como destacados
+        setFeaturedProducts(products.slice(0, 4));
+      } catch (error) {
+        console.error('Error loading products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
 
   return (
     <div className="home-page">
@@ -47,9 +59,15 @@ const Home = () => {
           <a href="/shop" className="view-all">Shop All</a>
         </div>
         <div className="grid grid-4">
-          {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading ? (
+            <p>Loading products...</p>
+          ) : featuredProducts.length > 0 ? (
+            featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <p>No products available</p>
+          )}
         </div>
       </section>
 

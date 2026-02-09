@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="main-footer">
       <div className="container footer-grid">
         <div className="footer-section brand-info">
-          <h2 className="logo">LEAFY</h2>
+          <h2 className="logo">CARROT</h2>
           <p>Bring the outdoors in. We deliver healthy, ready-to-go plants right to your door.</p>
         </div>
         
@@ -39,7 +39,7 @@ const Footer = () => {
       </div>
       <div className="footer-bottom">
         <div className="container">
-          <p>&copy; 2024 Leafy Replica Project. All rights reserved.</p>
+          <p>&copy; 2024 Carrot. All rights reserved.</p>
         </div>
       </div>
     </footer>

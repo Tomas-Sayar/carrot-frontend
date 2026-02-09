@@ -42,6 +42,31 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     width: 300px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.search-box:focus-within {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    width: 350px;
+}
+
+.clear-search {
+    background: none;
+    border: none;
+    color: #999;
+    padding: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.clear-search:hover {
+    background-color: #eee;
+    color: #333;
 }
 
 .search-box input {
@@ -139,4 +164,61 @@
     .search-box {
         width: 100%;
     }
+}
+
+/* Loading and Error States */
+.loading-state,
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.loading-state p,
+.error-state p {
+    margin-top: 1rem;
+    color: #666;
+    font-size: 1rem;
+}
+
+.error-state p {
+    color: var(--error);
+}
+
+.error-state .btn {
+    margin-top: 1rem;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    color: var(--primary-green);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem !important;
+    color: #888;
+    font-style: italic;
+}
+
+.description-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

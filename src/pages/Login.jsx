@@ -14,7 +14,7 @@ const Login = () => {
     <div className="auth-page container section-padding">
       <div className="auth-card">
         <h1>Welcome Back</h1>
-        <p>Log in to your Leafy account to manage your plant family.</p>
+        <p>Log in to your Carrot account to manage your plant family.</p>
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
