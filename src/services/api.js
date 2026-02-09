@@ -12,13 +12,23 @@ export const fetchProducts = async () => {
     }
 };
 
+export const fetchProductById = async (id) => {
+    try {
+        const response = await fetch(`${API_URL}/api/productos/${id}`);
+        if (!response.ok) throw new Error('Product not found');
+        const result = await response.json();
+        return result.data;
+    } catch (error) {
+        console.error(`Error fetching product ${id}:`, error);
+        return null;
+    }
+};
+
 export const fetchUsers = async () => {
     try {
         const response = await fetch(`${API_URL}/api/usuarios`);
         if (!response.ok) throw new Error('Network response was not ok');
         const result = await response.json();
-        // The API returns { 0: user, 1: user, ..., total: X }
-        // We convert it to an array
         const usersArray = Object.keys(result)
             .filter((key) => key !== 'total')
             .map((key) => result[key]);
@@ -41,6 +51,36 @@ export const fetchCategories = async () => {
     } catch (error) {
         console.error('Error fetching categories:', error);
         return [];
+    }
+};
+
+export const loginUser = async (credentials) => {
+    try {
+        const response = await fetch(`${API_URL}/api/usuarios/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credentials),
+        });
+        if (!response.ok) throw new Error('Login failed');
+        return await response.json();
+    } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+    }
+};
+
+export const registerUser = async (userData) => {
+    try {
+        const response = await fetch(`${API_URL}/api/usuarios/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData),
+        });
+        if (!response.ok) throw new Error('Registration failed');
+        return await response.json();
+    } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
     }
 };
 

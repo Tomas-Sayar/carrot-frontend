@@ -1,20 +1,23 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { getImageUrl } from '../services/api';
+import { useCart } from '../context/CartContext';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
-  const { id, name, price, categories, image, tag } = product;
-  const categoryName = categories?.name || 'Plant';
+  const { id, nombre, precio, categorias, imagen, tag } = product;
+  const { addToCart } = useCart();
+  const categoryName = categorias?.nombre || 'Plant';
 
   return (
     <div className="product-card">
       <div className="product-image-container">
         {tag && <span className="product-tag">{tag}</span>}
-        <a href={`/product/${id}`}>
-          <img src={getImageUrl(image)} alt={name} className="product-image" />
-        </a>
-        <button className="quick-add-btn">
+        <Link to={`/product/${id}`}>
+          <img src={getImageUrl(imagen)} alt={nombre} className="product-image" />
+        </Link>
+        <button className="quick-add-btn" onClick={() => addToCart(product)}>
           <Plus size={20} />
           <span>Add to cart</span>
         </button>
@@ -22,9 +25,9 @@ const ProductCard = ({ product }) => {
       <div className="product-info">
         <span className="product-category">{categoryName}</span>
         <h3 className="product-name">
-          <a href={`/product/${id}`}>{name}</a>
+          <Link to={`/product/${id}`}>{nombre}</Link>
         </h3>
-        <div className="product-price">${price}</div>
+        <div className="product-price">${precio}</div>
       </div>
     </div>
   );

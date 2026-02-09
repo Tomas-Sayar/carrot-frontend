@@ -1,18 +1,38 @@
-import React, { useState } from 'react';
-import { Plus, Edit2, Trash2, Search, Users, Package } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Edit2, Trash2, Search, Users, Package, Loader2 } from 'lucide-react';
+import { fetchProducts, fetchUsers } from '../services/api';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Bamboo Palm', price: 199, stock: 15, category: 'Large Plants' },
-    { id: 2, name: 'ZZ Plant', price: 139, stock: 24, category: 'Low Maintenance' },
-    { id: 3, name: 'Monstera Deliciosa', price: 99, stock: 8, category: 'Leafy' }
-  ]);
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Admin User', email: 'admin@leafy.com', role: 'Admin' },
-    { id: 2, name: 'John Doe', email: 'john@example.com', role: 'User' }
-  ]);
+  const [products, setProducts] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        if (activeTab === 'products') {
+          const data = await fetchProducts();
+          setProducts(data);
+        } else {
+          const data = await fetchUsers();
+          setUsers(data);
+        }
+      } catch (error) {
+        console.error('Error loading admin data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [activeTab]);
+
+  const filteredData = activeTab === 'products' 
+    ? products.filter(p => p.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
+    : users.filter(u => u.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || u.email.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <div className="admin-dashboard container section-padding">
@@ -38,14 +58,24 @@ const AdminDashboard = () => {
         <div className="admin-actions-bar">
           <div className="search-box">
             <Search size={18} />
-            <input type="text" placeholder={`Search ${activeTab}...`} />
+            <input 
+              type="text" 
+              placeholder={`Search ${activeTab}...`} 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
           <button className="btn btn-primary add-new-btn">
             <Plus size={18} /> Add {activeTab === 'products' ? 'Product' : 'User'}
           </button>
         </div>
 
-        {activeTab === 'products' ? (
+        {loading ? (
+          <div className="admin-loading">
+            <Loader2 className="animate-spin" size={40} />
+            <p>Loading {activeTab}...</p>
+          </div>
+        ) : activeTab === 'products' ? (
           <div className="admin-table-container">
             <table className="admin-table">
               <thead>
@@ -59,12 +89,12 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {products.map(product => (
+                {filteredData.map(product => (
                   <tr key={product.id}>
                     <td>#{product.id}</td>
-                    <td>{product.name}</td>
-                    <td>{product.category}</td>
-                    <td>${product.price}</td>
+                    <td>{product.nombre}</td>
+                    <td>{product.categorias?.nombre || 'General'}</td>
+                    <td>${product.precio}</td>
                     <td>{product.stock}</td>
                     <td className="actions-cell">
                       <button className="edit-btn"><Edit2 size={16} /></button>
@@ -88,12 +118,12 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map(user => (
+                {filteredData.map(user => (
                   <tr key={user.id}>
                     <td>#{user.id}</td>
-                    <td>{user.name}</td>
+                    <td>{user.nombre}</td>
                     <td>{user.email}</td>
-                    <td><span className={`role-badge ${user.role.toLowerCase()}`}>{user.role}</span></td>
+                    <td><span className={`role-badge ${(user.roles?.nombre || 'user').toLowerCase()}`}>{user.roles?.nombre || 'User'}</span></td>
                     <td className="actions-cell">
                       <button className="edit-btn"><Edit2 size={16} /></button>
                       <button className="delete-btn"><Trash2 size={16} /></button>

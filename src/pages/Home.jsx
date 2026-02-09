@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+import { fetchProducts } from '../services/api';
 import './Home.css';
 
 const Home = () => {
-  const featuredProducts = [
-    { id: 1, name: 'Bamboo Palm', price: 199, category: 'Large Plants', tag: 'Bestseller' },
-    { id: 2, name: 'ZZ Plant', price: 139, category: 'Low Maintenance', tag: 'Popular' },
-    { id: 3, name: 'Monstera Deliciosa', price: 99, category: 'Leafy', tag: 'Classic' },
-    { id: 4, name: 'Bird of Paradise', price: 99, category: 'Large Plants', tag: 'New' }
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadFeaturedProducts = async () => {
+      setLoading(true);
+      const data = await fetchProducts();
+      // We take the first 4 products as "Most Gifted"
+      setFeaturedProducts(data.slice(0, 4));
+      setLoading(false);
+    };
+    loadFeaturedProducts();
+  }, []);
 
   return (
     <div className="home-page">
@@ -17,8 +26,8 @@ const Home = () => {
           <h1>Plants Made Easy</h1>
           <p>Bring the beauty of nature into your home with our curated collection of healthy, nursery-fresh plants.</p>
           <div className="hero-actions">
-            <a href="/shop" className="btn btn-primary">Shop All Plants</a>
-            <a href="/shop" className="btn btn-outline">Find Your Match</a>
+            <Link to="/shop" className="btn btn-primary">Shop All Plants</Link>
+            <Link to="/shop" className="btn btn-outline">Find Your Match</Link>
           </div>
         </div>
       </section>
@@ -44,12 +53,16 @@ const Home = () => {
       <section className="featured-products container section-padding">
         <div className="section-header">
           <h2 className="section-title">Most Gifted</h2>
-          <a href="/shop" className="view-all">Shop All</a>
+          <Link to="/shop" className="view-all">Shop All</Link>
         </div>
         <div className="grid grid-4">
-          {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading ? (
+            Array(4).fill(0).map((_, i) => <div key={i} className="skeleton-card"></div>)
+          ) : (
+            featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          )}
         </div>
       </section>
 

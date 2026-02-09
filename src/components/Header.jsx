@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Search, User, Menu, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, Search, User, Menu, X, LogOut } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
 const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { cartCount } = useCart();
+  const { user, logout, isAuthenticated } = useAuth();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -29,14 +33,17 @@ const Header = () => {
         
         <nav className="main-nav">
           <ul className="nav-list">
-            <li><a href="/shop">Plants</a></li>
-            <li><a href="/shop">Care Tools</a></li>
-            <li><a href="/shop">Gifts</a></li>
+            <li><Link to="/shop">Plants</Link></li>
+            <li><Link to="/shop">Care Tools</Link></li>
+            <li><Link to="/shop">Gifts</Link></li>
+            {user?.roles?.nombre === 'Admin' && (
+              <li><Link to="/admin" className="admin-link">Admin Dashboard</Link></li>
+            )}
           </ul>
         </nav>
 
         <div className="logo-container">
-          <a href="/" className="logo">LEAFY</a>
+          <Link to="/" className="logo">CARROT</Link>
         </div>
 
         <div className="header-actions">
@@ -57,11 +64,21 @@ const Header = () => {
             </button>
           </div>
           
-          <a href="/profile" className="action-btn desktop-only"><User size={20} /></a>
-          <a href="/cart" className="action-btn cart-btn">
+          {isAuthenticated ? (
+            <div className="user-menu-header">
+              <Link to="/profile" className="action-btn desktop-only"><User size={20} /></Link>
+              <button onClick={logout} className="action-btn logout-btn desktop-only" title="Logout">
+                <LogOut size={20} />
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="action-btn desktop-only"><User size={20} /></Link>
+          )}
+
+          <Link to="/cart" className="action-btn cart-btn">
             <ShoppingCart size={20} />
-            <span className="cart-count">0</span>
-          </a>
+            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+          </Link>
         </div>
       </div>
     </header>

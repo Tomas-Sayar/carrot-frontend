@@ -1,26 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Trash2, ArrowLeft } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { getImageUrl } from '../services/api';
 import './Cart.css';
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'Bamboo Palm', price: 199, quantity: 1, pot: 'Stone', imageUrl: 'https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=200&q=80' },
-    { id: 2, name: 'ZZ Plant', price: 139, quantity: 2, pot: 'Clay', imageUrl: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=200&q=80' }
-  ]);
+  const { cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
 
-  const updateQuantity = (id, delta) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-    ));
-  };
-
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const shipping = subtotal > 150 ? 0 : 15;
-  const total = subtotal + shipping;
+  const shipping = cartTotal > 150 ? 0 : 15;
+  const total = cartTotal + shipping;
 
   return (
     <div className="cart-page container section-padding">
@@ -44,16 +32,16 @@ const Cart = () => {
             {cartItems.map(item => (
               <div key={item.id} className="cart-item">
                 <div className="product-cell">
-                  <img src={item.imageUrl} alt={item.name} />
+                  <img src={getImageUrl(item.imagen)} alt={item.nombre} />
                   <div className="product-details">
-                    <h3>{item.name}</h3>
-                    <p>Pot: {item.pot}</p>
-                    <button onClick={() => removeItem(item.id)} className="remove-btn">
+                    <h3>{item.nombre}</h3>
+                    <p>Price: ${item.precio}</p>
+                    <button onClick={() => removeFromCart(item.id)} className="remove-btn">
                       <Trash2 size={16} /> Remove
                     </button>
                   </div>
                 </div>
-                <div className="price-cell desktop-only">${item.price}</div>
+                <div className="price-cell desktop-only">${item.precio}</div>
                 <div className="quantity-cell">
                   <div className="quantity-control-small">
                     <button onClick={() => updateQuantity(item.id, -1)}>-</button>
@@ -61,7 +49,7 @@ const Cart = () => {
                     <button onClick={() => updateQuantity(item.id, 1)}>+</button>
                   </div>
                 </div>
-                <div className="total-cell">${item.price * item.quantity}</div>
+                <div className="total-cell">${item.precio * item.quantity}</div>
               </div>
             ))}
 
@@ -72,7 +60,7 @@ const Cart = () => {
             <h3>Order Summary</h3>
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>${subtotal}</span>
+              <span>${cartTotal}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>
